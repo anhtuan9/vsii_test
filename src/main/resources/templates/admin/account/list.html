@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="account/create-account">Create new note</a>
+<h1>Note</h1>
+<form>
+    Search by name:
+    <input name="s" type="text"/>
+    <input type="submit" value="Search"/>
+</form><br/>
+<div>
+    <a th:href="@{'/admin/account'(page=${accounts.number - 1})}" th:if="${accounts.hasPrevious()}">Previous</a>
+    <span th:text="${accounts.number + 1}"></span>/<span th:text="${accounts.totalPages}"></span>
+    <a th:href="@{'/admin/account'(page=${accounts.number + 1})}" th:if="${accounts.hasNext()}">Next</a>
+</div>
+<table border="1">
+    <tr>
+        <th>User Name</th>
+        <th>Password</th>
+        <th>Address</th>
+        <th>Full Name</th>
+        <th>Birthday</th>
+        <th>is locked</th>
+        <th>role</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    <th:block th:each="p : ${accounts}">
+        <tr>
+            <td th:text="${p.userName}"></td>
+            <td th:text="${p.password}"></td>
+            <td th:text="${p.address}"></td>
+            <td th:text="${p.fullName}"></td>
+            <td th:text="${p.birthday}"></td>
+            <td th:text="${p.role}"></td>
+            <td><a th:href="@{/edit-account/__${p.id}__ }">Edit</a></td>
+            <td><a th:href="@{/delete-account/__${p.id}__ }">Delete</a></td>
+        </tr>
+    </th:block>
+</table>
+</body>
+</html>

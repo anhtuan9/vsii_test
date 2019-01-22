@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table border="1">
+    <tr>
+        <th>User Name</th>
+        <th>Password</th>
+        <th>Address</th>
+        <th>Full Name</th>
+        <th>Birthday</th>
+        <th>is locked</th>
+        <th>role</th>
+        <th>Edit</th>
+    </tr>
+        <tr>
+            <td th:text="${account.userName}"></td>
+            <td th:text="${account.password}"></td>
+            <td th:text="${account.address}"></td>
+            <td th:text="${account.fullName}"></td>
+            <td th:text="${account.birthday}"></td>
+            <td th:text="${account.role}"></td>
+            <td><a th:href="@{user/change_password/}">Đổi mật khẩu</a></td>
+        </tr>
+</table>
+</body>
+</html>

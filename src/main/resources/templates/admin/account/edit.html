@@ -5,10 +5,10 @@
     <title>Edit Account</title>
 </head>
 <body>
+<th:block th:include="/_menu"></th:block>
+
 <h1>Edit Account</h1>
-<p>
-    <a href="/">Account list</a>
-</p>
+
 <th:block th:if="${message}">
     <p th:text="${message}"></p>
 </th:block>

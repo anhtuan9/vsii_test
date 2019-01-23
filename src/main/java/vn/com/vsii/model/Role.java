@@ -1,5 +1,7 @@
 package vn.com.vsii.model;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -47,4 +49,5 @@ public class Role {
     public void setAccounts(Set<Account> accounts) {
         this.accounts = accounts;
     }
+
 }

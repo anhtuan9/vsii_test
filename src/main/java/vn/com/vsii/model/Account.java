@@ -31,13 +31,13 @@ public class Account {
         this.roles = roles;
     }
 
-    public Account(String userName, String password, String address, String fullName, String birthday, boolean isLocked, String role) {
+    public Account(String userName, String password, String address, String fullName, String birthday, String role) {
         this.userName = userName;
         this.password = password;
         this.address = address;
         this.fullName = fullName;
         this.birthday = birthday;
-        this.isLocked = isLocked;
+        this.isLocked = true;
         this.role = role;
     }
 
@@ -106,5 +106,8 @@ public class Account {
 
     public void setRole(String role) {
         this.role = role;
+    }
+    public boolean getIsLocked(){
+        return isLocked;
     }
 }

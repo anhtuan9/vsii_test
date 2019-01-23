@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import vn.com.vsii.model.Bill;
 import vn.com.vsii.model.BillStatus;
-import vn.com.vsii.model.Role;
 import vn.com.vsii.service.BillService;
 import vn.com.vsii.service.BillStatusService;
 
@@ -39,7 +38,7 @@ public class TransactionController {
     }
 
     @PostMapping("/create-bill")
-    public ModelAndView saveBill(@Validated @ModelAttribute("bill") Bill bill, BindingResult bindingResult, Principal principal) {
+    public ModelAndView saveBill(@ModelAttribute("bill") Bill bill, Principal principal) {
         Date date = new Date();
         bill.setCreate_date(date);
         bill.setCreate_user(principal.getName());
@@ -59,7 +58,7 @@ public class TransactionController {
 
     }
 
-    @GetMapping("/teller/list")
+    @GetMapping("/teller")
     public ModelAndView listBills(Pageable pageable) {
         Page<Bill> bills = billService.findAll(pageable);
         ModelAndView modelAndView = new ModelAndView("teller/list");
@@ -67,7 +66,7 @@ public class TransactionController {
         return modelAndView;
     }
 
-    @GetMapping("/teller/delete-bill/{id}")
+    @GetMapping("/delete-bill/{id}")
     public ModelAndView showDeleteBillForm(@PathVariable Long id) {
         Bill bill = billService.findById(id);
         if (bill != null) {
@@ -80,9 +79,33 @@ public class TransactionController {
         }
     }
 
-    @PostMapping("/teller/delete-bill")
+    @PostMapping("/delete-bill")
     public String deleteBill(@ModelAttribute("bill") Bill bill) {
         billService.remove(bill.getBill_id());
-        return "redirect:/teller/list";
+        return "redirect:/teller/";
+    }
+
+    @GetMapping("/agree-bill-status/{id}")
+    public String agree(@PathVariable Long id) {
+        Bill bill = billService.findById(id);
+        if (bill != null) {
+            BillStatus billStatus = billStatusService.findByName("approved");
+            bill.setTrans_status_code(billStatus);
+            return "redirect:/teller";
+        } else {
+            return "/error.404";
+        }
+    }
+
+    @GetMapping("/refuse-bill-status/{id}")
+    public String refuse(@PathVariable Long id) {
+        Bill bill = billService.findById(id);
+        if (bill != null) {
+            BillStatus billStatus = billStatusService.findByName("refuse");
+            bill.setTrans_status_code(billStatus);
+            return "redirect:/teller";
+        } else {
+            return "/error.404";
+        }
     }
 }

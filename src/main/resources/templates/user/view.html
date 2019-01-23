@@ -5,6 +5,8 @@
     <title>Title</title>
 </head>
 <body>
+<th:block th:include="/_menu"></th:block>
+
 <table border="1">
     <tr>
         <th>User Name</th>
@@ -22,6 +24,8 @@
             <td th:text="${account.address}"></td>
             <td th:text="${account.fullName}"></td>
             <td th:text="${account.birthday}"></td>
+            <td> <span th:if="${p.isLocked}">tài khoản mở</span>
+                <span th:if="${!p.isLocked}">tài khoản đóng</span> </td>
             <td th:text="${account.role}"></td>
             <td><a th:href="@{user/change_password/}">Đổi mật khẩu</a></td>
         </tr>

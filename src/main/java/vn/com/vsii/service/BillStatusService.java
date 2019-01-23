@@ -1,5 +1,6 @@
 package vn.com.vsii.service;
 
+import vn.com.vsii.model.Bill;
 import vn.com.vsii.model.BillStatus;
 
 
@@ -12,5 +13,6 @@ public interface BillStatusService {
 
     void remove(Long id);
 
+    BillStatus findByName(String name);
 }
 

@@ -29,4 +29,9 @@ public class BillStatusServiceImpl implements BillStatusService {
     public void remove(Long id) {
         billStatusRepository.deleteById(id);
     }
+
+    @Override
+    public BillStatus findByName(String name) {
+        return billStatusRepository.findByName(name);
+    }
 }

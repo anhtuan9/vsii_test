@@ -1,39 +1,25 @@
 package vn.com.vsii.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import vn.com.vsii.model.Account;
-import vn.com.vsii.model.Role;
+import vn.com.vsii.model.MyUserPrincipal;
 import vn.com.vsii.repository.AccountRepository;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
-    private AccountRepository userRepository;
+    private AccountRepository accountRepository;
 
     @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account user = userRepository.findByUserName(username);
+    public UserDetails loadUserByUsername(String username) {
+        Account user = accountRepository.findByUserName(username);
         if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException(username);
         }
-
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        Set<Role> roles = user.getRoles();
-        for (Role role : roles) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
-        return new org.springframework.security.core.userdetails.User(
-                user.getUserName(), user.getPassword(), grantedAuthorities);
+        return new MyUserPrincipal(user);
     }
 }

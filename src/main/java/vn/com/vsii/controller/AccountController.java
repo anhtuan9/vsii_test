@@ -1,5 +1,6 @@
 package vn.com.vsii.controller;
 
+import com.sun.security.auth.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import vn.com.vsii.model.Account;
+import vn.com.vsii.model.MyUserPrincipal;
 import vn.com.vsii.model.Role;
 import vn.com.vsii.repository.RoleRepository;
 import vn.com.vsii.service.AccountService;
@@ -43,28 +45,29 @@ public class AccountController {
     }
 
     @PostMapping("/create-account")
-    public ModelAndView saveUser(@Validated @ModelAttribute("account")Account account, BindingResult bindingResult) {
-        if (bindingResult.hasFieldErrors()){
+    public ModelAndView saveUser(@Validated @ModelAttribute("account") Account account, BindingResult bindingResult) {
+        if (bindingResult.hasFieldErrors()) {
             return new ModelAndView("/admin/account/create");
-        }else {
+        } else {
             if (accountService.findByUserName(account.getUserName()) == null) {
                 account.setPassword(passwordEncoder.encode(account.getPassword()));
-                accountService.setupRole(account.getRole(),account);
+                accountService.setupRole(account.getRole(), account);
                 accountService.save(account);
                 ModelAndView modelAndView = new ModelAndView("/admin/account/create");
                 modelAndView.addObject("account", new Account());
                 modelAndView.addObject("message", "New account created successfully");
                 return modelAndView;
             } else {
-                    ModelAndView modelAndView = new ModelAndView("/admin/account/create");
-                    modelAndView.addObject("account", new Account());
-                    modelAndView.addObject("message", "Tên bị trùng");
-                    return modelAndView;
+                ModelAndView modelAndView = new ModelAndView("/admin/account/create");
+                modelAndView.addObject("account", new Account());
+                modelAndView.addObject("message", "Tên bị trùng");
+                return modelAndView;
             }
-        }}
+        }
+    }
 
 
-    @GetMapping("/admin/account")
+    @GetMapping("/admin")
     public ModelAndView listUser(@RequestParam("s") Optional<String> s,
                                  @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
                                  @RequestParam(name = "size", required = false, defaultValue = "6") Integer size) {
@@ -95,7 +98,7 @@ public class AccountController {
 
     @PostMapping("/edit-account")
     public ModelAndView updateUser(@ModelAttribute("account") Account account) {
-        accountService.setupRole(account.getRole(),account);
+        accountService.setupRole(account.getRole(), account);
         accountService.save(account);
         ModelAndView modelAndView = new ModelAndView("/admin/account/edit");
         modelAndView.addObject("account", account);
@@ -103,7 +106,7 @@ public class AccountController {
         return modelAndView;
     }
 
-    @GetMapping("/admin/delete-account/{id}")
+    @GetMapping("/delete-account/{id}")
     public ModelAndView showDeleteForm(@PathVariable Long id) {
         Account account = accountService.findById(id);
         if (account != null) {
@@ -116,45 +119,53 @@ public class AccountController {
         }
     }
 
-    @PostMapping("/admin/delete-account")
+    @PostMapping("/delete-account")
     public String deleteUser(@ModelAttribute("account") Account account) {
         accountService.remove(account.getId());
-        return "redirect:/admin/account";
+        return "redirect:/admin";
     }
+
     @GetMapping("user/change_password")
-    public ModelAndView showChangePass(){
+    public ModelAndView showChangePass() {
         return new ModelAndView("/user/change_password");
     }
 
     @PostMapping("/change_password")
     public ModelAndView ChangePass(Principal principal,
-                                   @RequestParam(name = "oldpassword") String oldpassword,
                                    @RequestParam(name = "newpassword") String newpassword,
-                                   @RequestParam(name = "newpassword1") String newpassword1){
+                                   @RequestParam(name = "newpassword1") String newpassword1) {
         ModelAndView modelAndView = new ModelAndView("user/change_password");
         Account account = accountService.findByUserName(principal.getName());
-        String oldpass = (passwordEncoder.encode(oldpassword));
-        if (account.getPassword().equals(oldpass)){
-            if (newpassword.equals(newpassword1)){
-                account.setPassword(passwordEncoder.encode(newpassword));
-                accountService.save(account);
-                modelAndView.addObject("message", "updated successfully");
-                return modelAndView;
-            }else {
-                modelAndView.addObject("message", "mật khẩu không trùng khớp");
-                return modelAndView;
-            }
-        }else {
-            modelAndView.addObject("message", "mật khẩu cũ không trùng khớp");
+        if (newpassword.equals(newpassword1)) {
+            account.setPassword(passwordEncoder.encode(newpassword));
+            accountService.save(account);
+            modelAndView.addObject("message", "updated successfully");
+            return modelAndView;
+        } else {
+            modelAndView.addObject("message", "mật khẩu không trùng khớp");
             return modelAndView;
         }
     }
+
     @GetMapping("/user")
-    public ModelAndView ShowInfo(Principal principal){
+    public ModelAndView ShowInfo(Principal principal) {
         ModelAndView modelAndView = new ModelAndView("user/view");
         Account account = accountService.findByUserName(principal.getName());
         modelAndView.addObject("account", account);
         return modelAndView;
+    }
+
+    @GetMapping("/lock-open/{id}")
+    public String closeOpen(@PathVariable Long id) {
+        Account account = accountService.findById(id);
+        if (account != null) {
+            account.setLocked(!account.getIsLocked());
+            accountService.save(account);
+            return "redirect:/admin";
+
+        } else {
+            return "admin/account/error.404";
+        }
     }
 
 }

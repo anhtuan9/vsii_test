@@ -1,5 +1,7 @@
 package vn.com.vsii.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -22,18 +24,24 @@ public class Bill {
     @JoinColumn(name = "trans_status_code")
     private BillStatus trans_status_code;
     private int is_confirm;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date create_date;
     private String create_user;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date send_date;
     private String send_user;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date apporve_reject_date;
     private String approve_reject_user;
     private String trans_id_code;
     private String branch_code;
     private int create_by;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date payment_date;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date effective_date;
     private String update_user;
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private Date update_date;
 
 

@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import vn.com.vsii.model.Bill;
@@ -24,6 +22,18 @@ public class ExportController {
         ModelAndView modelAndView = new ModelAndView("sup/list");
         modelAndView.addObject("bills", bills);
         return modelAndView;
+    }
+    @GetMapping("/views-bill/{id}")
+    public ModelAndView showViews(@PathVariable Long id) {
+        Bill bill = billService.findById(id);
+        if (bill != null) {
+            ModelAndView modelAndView = new ModelAndView("/sup/view");
+            modelAndView.addObject("bill", bill);
+            return modelAndView;
+
+        } else {
+            return new ModelAndView("/error.404");
+        }
     }
 
 }

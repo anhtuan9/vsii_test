@@ -1,16 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Bills</title>
+    <title>BIlls</title>
 </head>
 <body>
-<h1>Bill</h1>
-<form>
-    Search by name:
-    <input name="s" type="text"/>
-    <input type="submit" value="Search"/>
-</form><br/>
+<th:block th:include="/_menu"></th:block>
+
+<h1>Bills</h1>
 <div>
     <a th:href="@{'/sup/list'(page=${bills.number - 1})}" th:if="${bills.hasPrevious()}">Previous</a>
     <span th:text="${bills.number + 1}"></span>/<span th:text="${bills.totalPages}"></span>
@@ -18,63 +15,34 @@
 </div>
 <table border="1">
     <tr>
-        <th>Mã giao dịch</th>
-        <th>Loại giao dịch</th>
-        <th>Số tham chiếu khách hàng</th>
+        <th>STT</th>
+        <th>Ngày khởi tạo</th>
         <th>Số tham chiếu ngân hàng</th>
-        <th>Tên khách hàng</th>
-        <th>Địa chỉ khách hàng</th>
-        <th>Mã khách hàng</th>
+        <th>Loại GD</th>
+        <th>Trạng thái</th>
+        <th>Chi nhánh</th>
         <th>Số tiền</th>
         <th>Loại tiền</th>
-        <th>Ghi chú</th>
-        <th>Mã trạng thái giao dịch</th>
-        <th>Is confirm</th>
-        <th>Ngày tạo</th>
-        <th>Người tạo</th>
-        <th>Ngày gửi giao dịch</th>
-        <th>Người gửi giao dịch</th>
-        <th>Ngày duyệt/từ chối duyệt</th>
-        <th>Người duyệt/từ chối duyệt</th>
-        <th>Trans id code</th>
-        <th>Mã chi nhánh</th>
-        <th>Giao dịch dược tạo bởi</th>
-        <th>Ngày thanh toán</th>
-        <th>Ngày hiệu lực</th>
-        <th>Người cập nhật cuối</th>
-        <th>Ngày cập nhật cuối</th>
-        <th>Xem tri tiết</th>
-
+        <th>Thông báo</th>
+        <th>Chấp nhận</th>
+        <th>Từ chối</th>
+        <th>Xóa</th>
 
     </tr>
     <th:block th:each="p : ${bills}">
         <tr>
-            <td th:text="${p.transId}"></td>
-            <td th:text="${p.trans_type_code}"></td>
-            <td th:text="${p.cust_ref}"></td>
+            <td th:text="${p.bill_id}"></td>
+            <td th:text="${p.create_date}"></td>
             <td th:text="${p.bidv_ref}"></td>
-            <td th:text="${p.cust_name}"></td>
-            <td th:text="${p.cust_address}"></td>
-            <td th:text="${p.cif_no}"></td>
+            <td th:text="${p.trans_type_code}"></td>
+            <td th:text="${p.trans_status_code.name}"></td>
+            <td th:text="${p.branch_code}"></td>
             <td th:text="${p.amount}"></td>
             <td th:text="${p.curr_code}"></td>
-            <td th:text="${p.remark}"></td>
-            <td th:text="${p.trans_status_code.name}"></td>
-            <td th:text="${p.is_confirm}"></td>
-            <td th:text="${p.create_date}"></td>
-            <td th:text="${p.create_user}"></td>
-            <td th:text="${p.send_date}"></td>
-            <td th:text="${p.send_user}"></td>
-            <td th:text="${p.apporve_reject_date}"></td>
-            <td th:text="${p.approve_reject_user}"></td>
-            <td th:text="${p.trans_id_code}"></td>
-            <td th:text="${p.branch_code}"></td>
-            <td th:text="${p.create_by}"></td>
-            <td th:text="${p.payment_date}"></td>
-            <td th:text="${p.effective_date}"></td>
-            <td th:text="${p.update_user}"></td>
-            <td th:text="${p.update_date}"></td>
-
+            <td><a th:href="@{/views-bill/__${p.bill_id}__ }">Xem chi tiết</a></td>
+            <td><a th:if="${p.trans_status_code.name == 'Wait for approval'}" th:href="@{/agree-bill-status/__${p.bill_id}__ }">chấp nhận</a></td>
+            <td><a th:if="${p.trans_status_code.name == 'Wait for approval'}" th:href="@{/refuse-bill-status/__${p.bill_id}__ }">từ chối</a></td>
+            <td><a th:if="${p.trans_status_code.name == 'temporarily saved' || p.trans_status_code.name == 'refuse'}" th:href="@{/delete-bill/__${p.bill_id}__ }">Delete</a></td>
         </tr>
     </th:block>
 </table>
